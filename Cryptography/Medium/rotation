@@ -1,0 +1,6 @@
+PROBLEM STATEMENT : You will find the flag after decrypting this file. Download the encrypted flag here.
+After downloading and opening the file, we get this :
+xqkwKBN{z0bib1wv_l3kzgxb3l_i4j7l759}
+
+After seeing this, I tried to think the most layman approach that is rotation and after some guess I got it. You have to rotate the aplhabets in backward direction by a distance of 8.
+You get the flag : picoCTF{r0tat1on_d3crypt3d_a4b7d759}
