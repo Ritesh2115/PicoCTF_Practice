@@ -1,0 +1,96 @@
+PROBLEM STATEMENT : This is the Custom Cyclical Cipher! Download the ciphertext here. Download the encoder here.
+Enclose the flag in our wrapper for submission. If the flag was "example" you would submit "picoCTF{example}".
+
+HINT 1: Modern crypto schemes don't depend on the encoder to be secret, but this one does.
+
+The ciphertext file contains:
+DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTKAkOgFpOgFpOpkB
+AAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl
+
+The encoder file contains:
+import sys
+chars = ""
+from fileinput import input
+for line in input():
+  chars += line
+
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+out = ""
+
+prev = 0
+for char in chars:
+  cur = lookup1.index(char)
+  out += lookup2[(cur - prev) % 40]
+  prev = cur
+
+sys.stdout.write(out)
+
+So we have to decode the ciphertext and for that we need a decoder :
+
+import sys
+
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+ciphertext = "DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTK
+AkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl"
+
+decoded_text = ""
+
+prev = 0
+
+for char in ciphertext:
+    cur = lookup2.index(char)
+    decoded_text += lookup1[(cur + prev) % 40]
+    prev = (cur + prev) % 40
+
+sys.stdout.write(decoded_text)
+On running the program we get another code.
+
+#asciiorder
+#fortychars
+#selfinput
+#pythontwo
+
+chars = ""
+from fileinput import input
+for line in input():
+    chars += line
+b = 1 / 1
+
+for i in range(len(chars)):
+    if i == b * b * b:
+        print chars[i] #prints
+        b += 1 / 1
+
+So we have to add this part in our decoder and run this program(obtained) on the decoded text. So the full decoer is here.
+
+import sys
+
+ciphertext = "DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTK
+AkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl"
+
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
+
+chars = ""
+b = 1
+
+for char in ciphertext:
+    cur = lookup2.index(char)
+    prev = lookup1.index(chars[-1]) if chars else 0
+    chars += lookup1[(cur + prev) % 40]
+
+message = ''
+for i in range(len(chars)):
+    if i == b * b * b:
+        b += 1 / 1
+        message += chars[i]
+
+print("picoCTF{"+message+"}")
+
+Flag : picoCTF{adlibs}
+
+Resources : https://medium.com/@mastercode112/picoctf-2024-writeup-by-mastercode-d9eae91698a1
