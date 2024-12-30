@@ -11,21 +11,20 @@ HINT 4 : Minimum requirements for a useful cryptosystem is CPA security.
 On downloading and reading the file secret.enc, we did not get anything useful but reading the password.enc file, we got a large number :
 1765037049764047724348114634473658734830490852066061345686916365658618194981097216750929421734812911680434647401939068526285652985802740837961814227312100
 
-The question asks us to decrypt the message which will require a password which is the, as the question name suggests, is rsa encrpyted.
+The question asks us to decrypt the message which will require a password which is, as the question name suggests, rsa encrpyted.
 
 The cipher text(the large number) lets call it c. Then, c = m^e(mod n) where m is the message, e is public exponent and n is a large number. On doing, some research I got to know 
 that commonly used e = 65537.
 
-(If you enter 1 then it's hex value is 0x31 then m = 31)
+(If you enter 1 then it's hex value is 0x31 then m = 49(31 in hexadecimal is 49 in decimal))
 Now we have to find n.
 
-NOTE : Read the next 4 lines iff you have a love for math.
-////////////////////////////////////////////////////////////////////
-c = m^e(mod n)                                                    //
-=> c + k*n = m^e                                                  //
-=> n * k = m^e - c                                                //
-=> gcd(k1n, k2n, k3n, ....) = gcd(m1^e - c1, m2^e - c2, ...) = n  //
-////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// c = m^e(mod n)                                                   //
+// => c + k*n = m^e                                                 //
+// => n * k = m^e - c                                               //
+// => gcd(k1n, k2n, k3n, ....) = gcd(m1^e - c1, m2^e - c2, ...) = n //
+//////////////////////////////////////////////////////////////////////
 
 This property is very helpful. Till now we have not entered titan.picoctf.net 61366. Now we do so and see :
 
@@ -41,7 +40,6 @@ I entered 1, d, 5, th, Ctrl + G, 45 and fg and got some values of m and c.
 Now, I got a python program to find my n. And this is it :
 
 import gmpy2
-
 def recover_n(pairings, e):
     pt1, ct1 = pairings[0]
     N = gmpy2.mpz(ct1 - pow(pt1, e))
@@ -59,27 +57,34 @@ pairings = [(0x31, 4374671741411819653095065203638363839705760144524191633605358
             (0x3435, 3286616433621541064103753962036413364427152107997201112747880986787875222130917994167540998267597329630172037200861398866425612972256311409923526800468019),
             (0x6667, 5314659592412258038409558571386015036128130868475789747570036070931334231686992127796175990837054235008089357777432620439028628805491930884389340493769892)]
 N = recover_n(pairings, 65537)
-print("Recovered N:", N)
+print("Recovered N :", N)
 
 Output:
-Recovered N: 5507598452356422225755194020880876452588463543445995226287547479009566151786764261801368190219042978883834809435145954028371516656752643743433517325277971
-After this we have to decrypt the cipher i.e, c.
+Recovered N : 5507598452356422225755194020880876452588463543445995226287547479009566151786764261801368190219042978883834809435145954028371516656752643743433517325277971
+After this we have to decrypt the cipher i.e, c and for that we need m.
+
+////////////////////////////////////////////////////////////////////////
+// c = m^e(mod n)                                                     //
+// c' = 2^e(mod n)                                                    //
+// c_bis = c.c' = c*(m^e)(mod n)                                      //
+// => c_bis = (2*m)^e(mod n)                                          // 
+Giving c_bis to the server for decryption we'll get 2 * m(in hexa)
+// => m = (2 * m) // 2                                                //
+Now we have got the actual m which can now be decoded.
+////////////////////////////////////////////////////////////////////////
 
 import codecs
 class R(object):
     def __init__(self, n, e, c):
         c_bis = c * pow(2, e, n) % n
-        print("\t[*] Please send the following ciphertext to the server: {}\n".format(c_bis))
-        
-        out = int(input("\t[*] What's the result? "), 16)
-        p = out // 2
-        print("\t[+] The plaintext is: {}\n".format(p))
-
+        print("Please send the following ciphertext to the server: {}\n".format(c_bis))
+        p = int(input("What's the result? "), 16) // 2
+        print("The plaintext is: {}\n".format(p))
         try:
             p_text = codecs.decode(hex(p)[2:].replace('L',''), "hex_codec").decode('utf-8')
-            print("\n\t[+] The interpreted plaintext: {}\n".format(p_text))
+            print("The interpreted plaintext: {}\n".format(p_text))
         except:
-            print("\t[-] The plaintext is not interpretable\n")
+            print("The plaintext is not interpretable\n")
 
 
 if __name__ == "__main__":
@@ -90,18 +95,22 @@ if __name__ == "__main__":
     ans = R(n, e, c)
 
 OUTPUT :
-[*] Please send the following ciphertext to the server: 3033973080927972923558561625807906769120131418570887255750846060075146043758236420040248283746217041410601879829006136929772522402105002116607242807187426
-[*] What's the result? 707062c872
-[+] The plaintext is: 241460929593
-[+] The interpreted plaintext: 881d9
+Please send the following ciphertext to the server: 30339730809279729235585616258079067691201314185708872557508460600751460437582364200402482837462170414106018798290061369297725224021050021
+16607242807187426
+What's the result? 707062c872
+The plaintext is: 241460929593
+The interpreted plaintext: 881d9
 
 The program will ask you to send something to the server. Send it to titan.picoctf.net 61366 after entering decrypt and then copy the value given as (encoded cleartext as Hex m: ..) and
 paste it where your program R is running and you'll get a small alphanumeric string which is the password. Mine was 881d9.
 
-Now its time to decrypt the message. Moving to the folder where the secret.enc is present and then openssl enc -aes-256-cbc -d -in secret.enc, which gives a message
+Now reading the hint 2 we get to know that the message is AES-256-CBC encrypted so to decrypt it we move to folder where the secret.enc is present and then write the command 
+openssl enc -aes-256-cbc -d -in secret.enc, which gives a message
+
 enter AES-256-CBC decryption password: 881d9
 *** WARNING : deprecated key derivation used.
 Using -iter or -pbkdf2 would be better.
 picoCTF{su((3ss_(r@ck1ng_r3@_881d93b6}
 
 Here's are flag!
+Resources : https://sudorem.dev/posts/pico24-rsa-oracle/ and help of my friend.
