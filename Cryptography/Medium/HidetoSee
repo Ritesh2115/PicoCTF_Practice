@@ -1,0 +1,12 @@
+PROBLEM STATEMENT : How about some hide and seek heh? Look at this image here.
+
+Since my MAC didn't have steghide installed I used the webshell.
+First we need the download the image in the webshell using the following command
+wget link_of_the_image
+After
+Spect0rVor7ex-picoctf@webshell:~$ steghide extract -sf atbash.jpg
+Enter passphrase: 
+wrote extracted data to "encrypted.txt".
+Spect0rVor7ex-picoctf@webshell:~$ cat encrypted.txt
+krxlXGU{zgyzhs_xizxp_1u84w779}
+Flag : picoCTF{atbash_crack_1f84d779}
