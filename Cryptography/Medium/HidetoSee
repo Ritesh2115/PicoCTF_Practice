@@ -1,12 +1,39 @@
-PROBLEM STATEMENT : How about some hide and seek heh? Look at this image here.
+PROBLEM STATEMENT: How about some hide and seek heh? Look at this image here.
+HINT 1:  Download the image and try to extract something hidden inside it.  
 
-Since my MAC didn't have steghide installed I used the webshell.
-First we need the download the image in the webshell using the following command
+Now, if you’re using a Mac and don’t have steghide installed, no worries! You can use the webshell. But if you prefer installing it, use the following command:
+sudo port install steghide
+(Note: This process might take about 20 minutes.)  
+ 
+Open your webshell and download the image using this command:
 wget link_of_the_image
-After
-Spect0rVor7ex-picoctf@webshell:~$ steghide extract -sf atbash.jpg
-Enter passphrase: 
+Once the image is downloaded (and steghide is set up on your Mac), run this command: steghide extract -sf /Downloads/atbash.jpg
+When prompted for a passphrase, just press "Enter". Afterward, you’ll see a message like this:
 wrote extracted data to "encrypted.txt".
-Spect0rVor7ex-picoctf@webshell:~$ cat encrypted.txt
+Read the file named "encrypted.txt" and you'll get :  
 krxlXGU{zgyzhs_xizxp_1u84w779}
-Flag : picoCTF{atbash_crack_1f84d779}
+
+The name of the image itself gives away the cipher: Atbash Cipher.  
+
+To decrypt it, I wrote the following Python code:  
+
+def atbash_decrypt(ciphertext):
+    decrypted_text = ""
+    for char in ciphertext:
+        if char.isalpha():
+            if char.isupper():
+                decrypted_text += chr(65 + (25 - (ord(char) - 65)))
+            elif char.islower():
+                decrypted_text += chr(97 + (25 - (ord(char) - 97)))
+        else:
+            decrypted_text += char
+    return decrypted_text
+
+ciphertext = input("Enter the Atbash cipher text: ")
+plaintext = atbash_decrypt(ciphertext)
+print("Decrypted text:", plaintext)
+
+After running this code and inputting the cipher text, I got :
+picoCTF{atbash_crack_1f84d779}
+
+Flag: picoCTF{atbash_crack_1f84d779}
