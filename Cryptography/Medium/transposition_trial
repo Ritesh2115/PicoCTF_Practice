@@ -1,0 +1,23 @@
+PROBLEM STATEMENT : Our data got corrupted on the way here. Luckily, nothing got replaced, but every block of 3 got scrambled around! The first word seems to be three letters long, maybe you
+can use that to recover the rest of the message. Download the corrupted message here.
+
+HINT 1 : Split the message up into blocks of 3 and see how the first block is scrambled.
+The corrupted message is : heTfl g as iicpCTo{7F4NRP051N5_16_35P3X51N3_V6E5926A}4
+
+As we can see that the a string "abc" is turned to "cab". So, here is a c++ code for decryption :
+#include <iostream>
+using namespace std;
+
+int main() {
+    string s, t = "";
+    getline(cin, s);
+    for (int i = 0; i + 2 < s.length(); i += 3) {
+        t += s[i + 2];
+        t += s[i];
+        t += s[i + 1];
+    }
+    cout << t << endl;
+    return 0;
+}
+
+The message as output is : The flag is picoCTF{7R4N5P051N6_15_3XP3N51V3_56E6924A}
