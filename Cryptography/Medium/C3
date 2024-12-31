@@ -1,44 +1,45 @@
-PROBLEM STATEMENT : This is the Custom Cyclical Cipher! Download the ciphertext here. Download the encoder here.
-Enclose the flag in our wrapper for submission. If the flag was "example" you would submit "picoCTF{example}".
+PROBLEM STATEMENT : This is the Custom Cyclical Cipher! Download the ciphertext here. Download the encoder here. Enclose the flag in our wrapper for submission. If the flag was "example"
+you would submit "picoCTF{example}".  
 
-HINT 1: Modern crypto schemes don't depend on the encoder to be secret, but this one does.
-
-The ciphertext file contains:
-DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTKAkOgFpOgFpOpkB
-AAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl
-
-The encoder file contains:
+Ciphertext: DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTK
+AkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl
+  
+Here's the encoder code:  
 import sys
 chars = ""
 from fileinput import input
 for line in input():
-  chars += line
+    chars += line
 
 lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
 lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
 
 out = ""
-
 prev = 0
 for char in chars:
-  cur = lookup1.index(char)
-  out += lookup2[(cur - prev) % 40]
-  prev = cur
+    cur = lookup1.index(char)
+    out += lookup2[(cur - prev) % 40]
+    prev = cur
 
 sys.stdout.write(out)
 
-So we have to decode the ciphertext and for that we need a decoder :
+To decode the ciphertext, we need to reverse this process.
 
+Decoding Logic:  
+We reverse the encoding process by:
+1. Mapping the ciphertext characters from "lookup2" back to "lookup1".
+2. Iteratively computing the position using the cumulative transformation logic.
+
+Here's the decoder:  
 import sys
-
-lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
-lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
 
 ciphertext = "DLSeGAGDgBNJDQJDCFSFnRBIDjgHoDFCFtHDgJpiHtGDmMAQFnRBJKkBAsTMrsPSDDnEFCFtIbEDtDCIbFCFtHTJDKerFldbFObFCFtLBFkBAAAPFnRBJGEkerFlcPgKkImHnIlATJDKbTbFOkdNnsgbnJRMFnRBNAFkBAAAbrcbTK
 AkOgFpOgFpOpkBAAAAAAAiClFGIPFnRBaKliCgClFGtIBAAAAAAAOgGEkImHnIl"
 
-decoded_text = ""
+lookup1 = "\n \"#()*+/1:=[]abcdefghijklmnopqrstuvwxyz"
+lookup2 = "ABCDEFGHIJKLMNOPQRSTabcdefghijklmnopqrst"
 
+decoded_text = ""
 prev = 0
 
 for char in ciphertext:
@@ -47,7 +48,8 @@ for char in ciphertext:
     prev = (cur + prev) % 40
 
 sys.stdout.write(decoded_text)
-On running the program we get another code.
+
+Running this code gives another program.  
 
 #asciiorder
 #fortychars
@@ -65,7 +67,7 @@ for i in range(len(chars)):
         print chars[i] #prints
         b += 1 / 1
 
-So we have to add this part in our decoder and run this program(obtained) on the decoded text. So the full decoer is here.
+To integrate this into our decoder, append the cubic sequence extraction logic to the first decoder. Process the decoded text to extract the flag.
 
 import sys
 
@@ -91,6 +93,6 @@ for i in range(len(chars)):
 
 print("picoCTF{"+message+"}")
 
-Flag : picoCTF{adlibs}
+Flag: picoCTF{adlibs} 
 
-Resources : https://medium.com/@mastercode112/picoctf-2024-writeup-by-mastercode-d9eae91698a1
+Resources: For more details, check out the write-up: [Medium Write-Up](https://medium.com/@mastercode112/picoctf-2024-writeup-by-mastercode-d9eae91698a1).
