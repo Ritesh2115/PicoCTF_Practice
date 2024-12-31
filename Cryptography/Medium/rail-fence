@@ -1,0 +1,53 @@
+PROBLEM STATEMENT : A type of transposition cipher is the rail fence cipher, which is described here(https://en.wikipedia.org/wiki/Rail_fence_cipher). Here is one such cipher encrypted
+using the rail fence with 4 rails. Can you decrypt it? Download the message here. Put the decoded message in the picoCTF flag format, picoCTF{decoded_message}.
+
+HINT 1 : Once you've understood how the cipher works, it's best to draw it out yourself on paper
+
+The message contains : Ta _7N6D49hlg:W3D_H3C31N__A97ef sHR053F38N43D7B i33___N6
+
+As the question suggest the  message is a rail fence cipher. A rail fence cipher wants a key which is in the range {2, len(cipher)}.
+So I created a python program to decode the cipher : 
+
+def decrypt_rail_fence(ciphertext, key):
+    rail = [['\n' for _ in range(len(ciphertext))] for _ in range(key)]
+
+    direction_down = None
+    row, col = 0, 0
+
+    for _ in range(len(ciphertext)):
+        if row == 0:
+            direction_down = True
+        if row == key - 1:
+            direction_down = False
+        rail[row][col] = '*'
+        col += 1
+        row += 1 if direction_down else -1
+
+    index = 0
+    for i in range(key):
+        for j in range(len(ciphertext)):
+            if rail[i][j] == '*' and index < len(ciphertext):
+                rail[i][j] = ciphertext[index]
+                index += 1
+
+    result = []
+    row, col = 0, 0
+    for _ in range(len(ciphertext)):
+        if row == 0:
+            direction_down = True
+        if row == key - 1:
+            direction_down = False
+        if rail[row][col] != '\n':
+            result.append(rail[row][col])
+            col += 1
+        row += 1 if direction_down else -1
+
+    return ''.join(result)
+
+ciphertext = "Ta _7N6D49hlg:W3D_H3C31N__A97ef sHR053F38N43D7B i33___N6"
+for key in range(2, len(ciphertext)):
+    print(f"Key = {key}, Decrypted Text: {decrypt_rail_fence(ciphertext, key)}")
+
+The output is for key = 4 : Decrypted Text: The flag is: WH3R3_D035_7H3_F3NC3_8361N_4ND_3ND_4A76B997
+
+Flag : picoCTF{WH3R3_D035_7H3_F3NC3_8361N_4ND_3ND_4A76B997}
