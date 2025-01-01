@@ -1,0 +1,10 @@
+PROBLEM STATEMENT : Morse code is well known. Can you decrypt this? Download the file here. Wrap your answer with picoCTF{}, put underscores in place of pauses, and use all lowercase.
+
+HINT 1 : Audacity is a really good program to analyze morse code audio.
+
+The file is an audio file. A morse code is where dits are converted to dots(.) and dahs are converted to dashes(-).
+The morse code detected is .-- .... ....- --...    .... ....- --... ....    ----. ----- -..    .-- ..--- ----- ..- ----. .... --...(4 spaces = 1 pause)
+First, I manually calculated the morse code(nearly perfect) but after searching I got an online decoder https://morsecode.world/international/decoder/audio-decoder-adaptive.html
+The final decoded text is : wh47 h47h 90d w20u9h7
+
+Flag : picoCTF{wh47_h47h_90d_w20u9h7}
