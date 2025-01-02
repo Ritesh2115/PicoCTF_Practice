@@ -1,0 +1,47 @@
+PROBLEM STATEMENT : This service can provide you with a random number, but can it do anything else? Connect to the program with netcat: nc saturn.picoctf.net 62294 The program's source code
+can be downloaded here.
+
+HINT 1: Can you point the program to a function that does something useful for you?
+
+The code file(after removing the comments) contains : 
+import sys
+
+def getRandomNumber():
+  print(4)
+
+def exit():
+  sys.exit(0)
+  
+def esoteric1():
+  esoteric = \
+  print(esoteric)
+
+def win():
+  flag = open('flag.txt', 'r').read()
+  #flag = flag[:-1]
+  flag = flag.strip()
+  str_flag = ''
+  for c in flag:
+    str_flag += str(hex(ord(c))) + ' '
+  print(str_flag)
+
+def esoteric2():
+  esoteric = \
+  print(esoteric)
+
+while(True):
+  try:
+    print('Try entering "getRandomNumber" without the double quotes...')
+    user_input = input('==> ')
+    eval(user_input + '()')
+  except Exception as e:
+    print(e)
+    break
+
+The while loop, as you can is evaluating the function which you are entering as input(i.e, if you enter getRandomNumber it will print 4)
+So, instead of entering getRandomNumber, we would enter win due to which win() will be executed and the following would be printed.
+0x70 0x69 0x63 0x6f 0x43 0x54 0x46 0x7b 0x34 0x5f 0x64 0x31 0x34 0x6d 0x30 0x6e 0x64 0x5f 0x31 0x6e 0x5f 0x37 0x68 0x33 0x5f 0x72 0x30 0x75 0x67 0x68 0x5f 0x63 0x65 0x34 0x62 0x35 0x64 0x35
+0x62 0x7d
+It is the hexadecimal representation of each character of the flag.
+
+Flag : picoCTF{4_d14m0nd_1n_7h3_r0ugh_ce4b5d5b}
