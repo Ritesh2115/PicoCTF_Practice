@@ -1,0 +1,18 @@
+PROBLEM STATEMENT : Reverse this linux executable? binary
+
+HINT 1 : What can we do to reduce the size of a binary after compiling it.
+
+First we have to unpack the file using upx -d ./out 
+After that I tried using strings on this file. It was endless 🥶. So I tried grepping "pico" or "flag".
+After grepping flag I got this.
+Password correct, please see flag: 7069636f4354467b5539585f556e5034636b314e365f42316e34526933535f65313930633366337d
+(mode_flags & PRINTF_FORTIFY) != 0
+WARNING: Unsupported flag value(s) of 0x%x in DT_FLAGS_1.
+version == NULL || !(flags & DL_LOOKUP_RETURN_NEWEST)
+flag.c
+_dl_x86_hwcap_flags
+_dl_stack_flags
+
+Now going to cyberchef.com and then using magic on the flag I got the decoded flag.
+
+Flag : picoCTF{U9X_UnP4ck1N6_B1n4Ri3S_e190c3f3}
