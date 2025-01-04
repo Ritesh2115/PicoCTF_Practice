@@ -1,0 +1,21 @@
+PROBLEM STATEMENT : We found a leak of a blackmarket website's login credentials. Can you find the password of the user cultiris and successfully decrypt it? Download the leak here. The
+first user in usernames.txt corresponds to the first password in passwords.txt. The second user corresponds to the second password, and so on.
+
+HINT 1 : Maybe other passwords will have hints about the leak?
+
+First I created a python program in the same directory as the usernames.txt and passwords.txt. The program :
+with open('usernames.txt', 'r') as usernames_file:
+    usernames = usernames_file.read().splitlines()
+with open('passwords.txt', 'r') as passwords_file:
+    passwords = passwords_file.read().splitlines()
+
+try:
+    index = usernames.index('cultiris')
+    corresponding_password = passwords[index]
+    print(f"The password corresponding to 'cultiris' is: {corresponding_password}")
+
+The password found is : cvpbPGS{P7e1S_54I35_71Z3}
+
+The password is ROT13 encrypted.
+
+Flag : picoCTF{C7r1F_54V35_71M3}
